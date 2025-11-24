@@ -15,7 +15,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-//    private final JwtService jwtService ;
+    private final JwtService jwtService ;
 //     so we can intercept every request and extract data
 //    for example from the request and provide new data
 //    within the response so for example I want to add
@@ -35,6 +35,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwt = authHeader.substring(7); // starts after 7 since Bearer with space 7 chars
-//        userEmail = jwtService.extractUsername(jwt); // used to extract the userEmail from JWT token in Spring Security unique identifier call it username
+        userEmail = jwtService.extractUsername(jwt); // used to extract the userEmail from JWT token in Spring Security unique identifier call it username
     }
 }
