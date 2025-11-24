@@ -6,9 +6,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -44,9 +46,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 //        check if the user is authenticated or not
 //        SecurityContextHolder.getContext().getAuthentication() == null means user is not authenticated
+//        when we have userEmail and user not authenticated
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername();
-
+//            we get userDetails from the DB
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+//          check if the token and user are valid we will update security context
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+//          will create an object of type a username,
+//          password authentication token by passing
+//          userDetails, credentials, and authorities
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+// reinforce the auth token with details of our request
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+// update the auth token
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            }
         }
+//        after if statement do not forget to call filterChain
+//        to pass the hand to the next filter
+        filterChain.doFilter(request, response);
     }
 }

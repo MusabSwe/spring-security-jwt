@@ -49,7 +49,7 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-//    compare between the token with user token
+//    compare between the received token with user token
         final String username = extractUsername(token); // username should be unique and here username is the email
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
