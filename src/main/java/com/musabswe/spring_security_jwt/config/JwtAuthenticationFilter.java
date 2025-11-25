@@ -34,6 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response, // is our response
             @NonNull FilterChain filterChain // is the chain of responsibility design pattern , so it will contain the list of other filters that we need to execute
     ) throws ServletException, IOException {
+
+        // 🔹 Skip filtering for public auth endpoints (register, login)
+//        if (request.getServletPath().startsWith("/api/v1/auth/")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
